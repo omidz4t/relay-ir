@@ -88,3 +88,7 @@ smtpd_sender_login_maps = regexp:/etc/postfix/login_map
 # Do not lookup SMTP client hostnames to reduce delays
 # and avoid unnecessary DNS requests.
 smtpd_peername_lookup = no
+
+default_process_limit = 1000
+lmtp_destination_concurrency_limit = 500
+lmtp_destination_recipient_limit = 50

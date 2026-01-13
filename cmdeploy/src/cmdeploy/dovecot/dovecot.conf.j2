@@ -124,16 +124,11 @@ plugin {
 }
 
 protocol lmtp {
-  # notify plugin is a dependency of push_notification plugin:
-  # <https://doc.dovecot.org/settings/plugin/notify-plugin/>
-  #
-  # push_notification plugin documentation:
-  # <https://doc.dovecot.org/configuration_manual/push_notification/>
-  #
-  # mail_lua and push_notification_lua are needed for Lua push notification handler.
-  # <https://doc.dovecot.org/configuration_manual/push_notification/#configuration>
-  mail_plugins = $mail_plugins mail_lua notify push_notification push_notification_lua
+  # mail_plugins = $mail_plugins mail_lua notify push_notification push_notification_lua
+  mail_plugins = $mail_plugins
 }
+
+mail_fsync = never
 
 plugin {
   zlib_save = gz
@@ -160,6 +155,8 @@ plugin {
 
 service lmtp {
   user=vmail
+  process_limit = 1000
+  vsz_limit = 1G
 
   unix_listener /var/spool/postfix/private/dovecot-lmtp {
     group = postfix

@@ -155,3 +155,20 @@ class AcmetoolDeployer(Deployer):
             name=f"Reconcile certificates for: {', '.join(self.domains)}",
             commands=["acmetool --batch --xlog.severity=debug reconcile"],
         )
+
+        # Ensure postfix and dovecot can read certificates
+        server.shell(
+            name="Fix acme permissions after reconciliation",
+            commands=[
+                "groupadd -f ssl-cert",
+                "usermod -a -G ssl-cert postfix",
+                "usermod -a -G ssl-cert dovecot",
+                "if [ -d /var/lib/acme/live ]; then "
+                "chown -R root:ssl-cert /var/lib/acme/live /var/lib/acme/keys && "
+                "chmod 750 /var/lib/acme/live /var/lib/acme/keys && "
+                "chmod 750 /var/lib/acme/keys/* 2>/dev/null || true; "
+                "chmod 640 /var/lib/acme/live/*/privkey /var/lib/acme/keys/*/privkey 2>/dev/null || true && "
+                "chmod 644 /var/lib/acme/live/*/fullchain 2>/dev/null || true; "
+                "fi",
+            ],
+        )

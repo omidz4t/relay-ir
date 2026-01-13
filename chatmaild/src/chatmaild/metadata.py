@@ -117,7 +117,7 @@ class MetadataDictProxy(DictProxy):
             self.metadata.add_token_to_addr(addr, value)
             return True
         elif keyname[0] == "priv" and keyname[2] == "messagenew":
-            self.notifier.new_message_for_addr(addr, self.metadata)
+            # self.notifier.new_message_for_addr(addr, self.metadata)
             return True
 
         return False

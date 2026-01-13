@@ -154,18 +154,5 @@ class NotifyThread(Thread):
         return True
 
     def perform_request_to_notification_server(self, requests_session, queue_item):
-        timeout = self.notifier.CONNECTION_TIMEOUT
-        token = queue_item.token
-        try:
-            res = requests_session.post(self.notifier.URL, data=token, timeout=timeout)
-        except requests.exceptions.RequestException as e:
-            res = e
-        else:
-            if res.status_code in (200, 410):
-                if res.status_code == 410:
-                    self.remove_token_from_addr(queue_item.addr, token)
-                queue_item.delete()
-                return
-
-        logging.warning(f"Notification request failed: {res!r}")
-        self.notifier.queue_for_retry(queue_item, retry_num=self.retry_num + 1)
+        queue_item.delete()
+        return
